@@ -14,7 +14,9 @@ with open("text.txt", 'r') as file:
         sentenses[i] = sentenses[i].replace("?", '')
         sentenses[i] = sentenses[i].replace("”", '')
         sentenses[i] = sentenses[i].replace("“", '')
-        sentenses[i] = sentenses[i].replace("-", '')
+        #sentenses[i] = sentenses[i].replace("-", '')
+        sentenses[i] = sentenses[i].replace("’", '')
+        sentenses[i] = sentenses[i].replace("—", '-')
         sentenses[i] = sentenses[i].strip()
         alphabet = list(string.ascii_lowercase) + list(string.ascii_uppercase)
         if (len(sentenses[i]) >= 1) and (not sentenses[i][0] in alphabet):
@@ -28,8 +30,8 @@ with open("text.txt", 'r') as file:
     ans = []
     for i in sentenses:
         if len(i) >= 10:
-            ans.append(i)
+            ans.append(i) 
 print(ans)          
 with open("sentenses.txt", 'w') as file:
     for sentense in ans:
-        file.write(sentense + '\n')
+        file.write(sentense + '.\n')

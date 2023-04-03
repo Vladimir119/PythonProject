@@ -90,6 +90,7 @@ class DadaProcessor():
 class Console():
     def __init__(self):
         self.stdsrc = curses.initscr()
+
         self.number_str = 0
         self.index_in_str = 0
         self.stdsrc.clear()
@@ -98,14 +99,15 @@ class Console():
         self.number_str += 1
         self.index_in_str = 0
 
-    def sendMessage(self, message):
-        self.stdsrc.addstr(self.number_str, self.index_in_str, message)
-        temp = self.index_in_str + len(message)
-        self.index_in_str = temp % curses.COLS
-        self.number_str += temp // curses.COLS
-        self.stdsrc.refresh()
-        if len(message) >= 1 and message[-1] == '\n':
-            self.transportToNextLine()
+    def sendMessage(self, message, color, without_move=False):
+        self.stdsrc.addstr(self.number_str, self.index_in_str, message, color)
+        if not without_move:
+            temp = self.index_in_str + len(message)
+            self.index_in_str = temp % curses.COLS
+            self.number_str += temp // curses.COLS
+            self.stdsrc.refresh()
+            if len(message) >= 1 and message[-1] == '\n':
+                self.transportToNextLine()
 
     def getChar(self):
         return self.stdsrc.getkey()
@@ -129,7 +131,7 @@ class Console():
                 continue
             else:
                 if not is_blind:
-                    self.sendMessage(key)
+                    self.sendMessage(key, curses.color_pair(1))
                 message += key
             if key in end_of_input:
                 break
@@ -141,31 +143,36 @@ class Console():
         self.number_str = 0
         self.index_in_str = 0
         
-console = Console()
 all_sentenses = []
+console = Console()
 
 def start(stdsrc):
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
+    curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+
     name = DadaProcessor.getName()
     if name == '':
         name = initialize()
     DadaProcessor.saveName(name)
-    console.sendMessage('hello ' + name)
+    console.sendMessage('hello ' + name, curses.color_pair(1))
     global all_sentenses
     all_sentenses = DadaProcessor.getAllSentenses()
 
 def initialize():
-    console.sendMessage("enter your name")
+    console.sendMessage("enter your name", curses.color_pair(1))
     console.transportToNextLine()
     return console.getMessage(is_blind=False)
 
 def generateText():
-    count_of_sentenses = random.randint(1, 3)
+    count_of_sentenses = random.randint(1, 2)
     ans = ''
     for i in range(count_of_sentenses):
         diaposon = len(all_sentenses)
         num = random.randint(0, diaposon)
         ans += all_sentenses[num]
-    
+        if i != (count_of_sentenses - 1):
+            ans += ' '
     return ans
 
 def test():
@@ -173,17 +180,21 @@ def test():
     num_in_text = 0
     count_error = 0
     speed = 0
-    console.sendMessage(text)
-    console.transportToNextLine()
+    console.sendMessage(text, color=curses.color_pair(2), without_move=True)
+    #console.transportToNextLine()
 
-    start = time.time()
-
+    is_start = False
     while num_in_text < len(text):
-        char = console.getChar() 
+        char = console.getChar()
+
+        if not is_start:
+            start = time.time()
+            is_start = True
+
         if char != text[num_in_text]:
             count_error += 1
         else:
-            console.sendMessage(char)
+            console.sendMessage(char,color=curses.color_pair(3))
             num_in_text += 1
 
     end = time.time()
@@ -192,7 +203,7 @@ def test():
     count_word_in_text = len(text.split())
     speed = int(count_word_in_text / time_test * 60)
 
-    console.sendMessage(f"your spped: {speed} your error {count_error}")
+    console.sendMessage(f"your spped: {speed} your error {count_error}", curses.color_pair(2))
     console.transportToNextLine()
 
     current_tests.append(str(Test(count_word_in_text=count_word_in_text,
@@ -223,7 +234,7 @@ def printHelp():
     console.sendMessage("""    commands:
     start test
     build grafic
-    exit""")
+    exit""", curses. color_pair(1))
     for i in range(4):
         console.transportToNextLine()
  
@@ -237,7 +248,7 @@ def work(stdsrc):
         message = console.getMessage(is_blind=False)
         message = message.strip()
         console.transportToNextLine()
-        console.sendMessage(message)
+        console.sendMessage(message, curses.color_pair(1))
         console.clear()
         if message == 'exit':
             break
@@ -246,7 +257,7 @@ def work(stdsrc):
         if message == 'start test':
             test()
         else:
-            console.sendMessage('not command ' + message)
+            console.sendMessage('not command ' + message, curses.color_pair(1))
             console.transportToNextLine()
 
 def main():
