@@ -14,7 +14,7 @@ with open("text.txt", 'r') as file:
         sentenses[i] = sentenses[i].replace("?", '')
         sentenses[i] = sentenses[i].replace("”", '')
         sentenses[i] = sentenses[i].replace("“", '')
-        #sentenses[i] = sentenses[i].replace("-", '')
+        sentenses[i] = sentenses[i].replace("‘", '')
         sentenses[i] = sentenses[i].replace("’", '')
         sentenses[i] = sentenses[i].replace("—", '-')
         sentenses[i] = sentenses[i].strip()
@@ -31,7 +31,6 @@ with open("text.txt", 'r') as file:
     for i in sentenses:
         if len(i) >= 10:
             ans.append(i) 
-print(ans)          
-with open("sentenses.txt", 'w') as file:
+with open("../source/sentenses.txt", 'w') as file:
     for sentense in ans:
         file.write(sentense + '.\n')

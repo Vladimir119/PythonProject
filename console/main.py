@@ -5,7 +5,7 @@ import time
 import matplotlib.pyplot as plt
 import random
 
-end_of_input = ['\n', '\t']
+end_of_input = ["\n", "\t"]
 
 class Test():
     def __init__(self, count_word_in_text=0, count_error=0, speed=0, time_test=0):
@@ -15,7 +15,7 @@ class Test():
         self.time_test = time_test
 
     def __str__(self):
-        return str(self.count_word_in_text) + ' ' + str(self.count_error) + ' ' + str(self.speed) + ' ' + str(self.time_test)
+        return str(self.count_word_in_text) + " " + str(self.count_error) + " " + str(self.speed) + " " + str(self.time_test)
 
     def getList(self):
         return [count_word_in_text, count_error, speed]
@@ -25,24 +25,24 @@ current_tests = []
 class DadaProcessor():
     @staticmethod
     def getAllData(name_of_file):
-        with open(name_of_file, 'r') as file:
+        with open(name_of_file, "r") as file:
             all_data = json.load(file)
         return all_data
 
     @staticmethod
     def setAllData(name_of_file, all_data):
-        with open(name_of_file, 'w') as file:
+        with open(name_of_file, "w") as file:
             json.dump(all_data, file, indent=2)
     
     @staticmethod
     def uploadCountOfTest():
-        all_data = DadaProcessor.getAllData("data.json")
-        count_of_test = all_data['count of elements']
+        all_data = DadaProcessor.getAllData("source/data.json")
+        count_of_test = all_data["count of elements"]
         return count_of_test
 
     @staticmethod
     def loadAllTest():
-        all_data = DadaProcessor.getAllData("data.json")
+        all_data = DadaProcessor.getAllData("source/data.json")
         all_test = all_data["data of tests"]
         return all_test
 
@@ -56,32 +56,32 @@ class DadaProcessor():
         all_test += current_tests
         count_of_test += len(current_tests)
 
-        all_data = DadaProcessor.getAllData("data.json")
+        all_data = DadaProcessor.getAllData("source/data.json")
 
         all_data["data of tests"] = all_test
         all_data["count of elements"] = count_of_test
             
-        DadaProcessor.setAllData("data.json" ,all_data)
+        DadaProcessor.setAllData("source/data.json" ,all_data)
         current_tests = []
 
     @staticmethod
     def saveName(name):
-        all_config = DadaProcessor.getAllData("config.json")
+        all_config = DadaProcessor.getAllData("source/config.json")
 
-        all_config['name'] = name
+        all_config["name"] = name
 
-        DadaProcessor.setAllData("config.json", all_config)
+        DadaProcessor.setAllData("source/config.json", all_config)
 
     @staticmethod
     def getName():
-        all_config = DadaProcessor.getAllData("config.json")
-        name = all_config['name']
+        all_config = DadaProcessor.getAllData("source/config.json")
+        name = all_config["name"]
         return name
 
     @staticmethod
     def getAllSentenses():
         all_sentenses = []
-        with open("sentenses.txt") as file:
+        with open("source/sentenses.txt") as file:
             for line in file:
                 line = line[:-1]
                 all_sentenses.append(line)
@@ -106,7 +106,7 @@ class Console():
             self.index_in_str = temp % curses.COLS
             self.number_str += temp // curses.COLS
             self.stdsrc.refresh()
-            if len(message) >= 1 and message[-1] == '\n':
+            if len(message) >= 1 and message[-1] == "\n":
                 self.transportToNextLine()
 
     def getChar(self):
@@ -115,7 +115,7 @@ class Console():
     def getMessage(self, is_blind=True):
         start_srt = self.number_str
         start_index_in_srt = self.index_in_str
-        message = ''
+        message = ""
         while True:
             key = self.getChar()
 
@@ -126,7 +126,7 @@ class Console():
                         self.index_in_str = curses.COLS - 1;
                     else:
                         self.index_in_str -= 1
-                    self.stdsrc.addstr(self.number_str, self.index_in_str, ' ')
+                    self.stdsrc.addstr(self.number_str, self.index_in_str, " ")
                     message = message[:-1]
                 continue
             else:
@@ -152,10 +152,10 @@ def start(stdsrc):
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
     name = DadaProcessor.getName()
-    if name == '':
+    if name == "":
         name = initialize()
     DadaProcessor.saveName(name)
-    console.sendMessage('hello ' + name, curses.color_pair(1))
+    console.sendMessage("hello " + name, curses.color_pair(1))
     global all_sentenses
     all_sentenses = DadaProcessor.getAllSentenses()
 
@@ -166,13 +166,13 @@ def initialize():
 
 def generateText():
     count_of_sentenses = random.randint(1, 2)
-    ans = ''
+    ans = ""
     for i in range(count_of_sentenses):
         diaposon = len(all_sentenses)
         num = random.randint(0, diaposon)
         ans += all_sentenses[num]
         if i != (count_of_sentenses - 1):
-            ans += ' '
+            ans += " "
     return ans
 
 def test():
@@ -225,9 +225,9 @@ def buildGrafic():
         counter += 1
     plt.plot(x, y_speed, label="speed", color="blue")
     plt.plot(x, y_error, label="error", color="red", linestyle="dashed")
-    plt.xlabel('attempt')
-    plt.ylabel('speed')
-    plt.title('WPM grafic')
+    plt.xlabel("attempt")
+    plt.ylabel("speed")
+    plt.title("WPM grafic")
     plt.show()
 
 def printHelp():
@@ -250,14 +250,14 @@ def work(stdsrc):
         console.transportToNextLine()
         console.sendMessage(message, curses.color_pair(1))
         console.clear()
-        if message == 'exit':
+        if message == "exit":
             break
-        if message == 'build grafic':
+        if message == "build grafic":
             buildGrafic()
-        if message == 'start test':
+        if message == "start test":
             test()
         else:
-            console.sendMessage('not command ' + message, curses.color_pair(1))
+            console.sendMessage("not command " + message, curses.color_pair(1))
             console.transportToNextLine()
 
 def main():
